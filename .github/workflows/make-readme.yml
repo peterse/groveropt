@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    
+
       - uses: actions/checkout@v2
       - name: Install Python 3.7
         uses: actions/setup-python@v2
@@ -23,10 +23,10 @@ jobs:
         run: |
           python3 -m pip install --upgrade pip
           pip install -r requirements.txt
-        
+
         # Convert
       - name: Convert notebook
-        run: jupyter nbconvert --template "pythoncodeblocks.tpl" --ClearMetadataPreprocessor.enabled=True --ClearOutput.enabled=True  --to markdown README.ipynb 
+        run: jupyter nbconvert --template "mdtemplate.tpl" --ClearMetadataPreprocessor.enabled=True --ClearOutput.enabled=True  --to markdown README.ipynb 
 
       # Commit.
       - name: Commit files
@@ -35,7 +35,7 @@ jobs:
           git config --local user.name "GitHub Action"
           git add README.md
           git commit -m "Convert README.ipynb to markdown" -a
-          
+
       # Push.
       - name: Push changes
         if: success()
