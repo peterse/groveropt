@@ -3,7 +3,7 @@ name: Make README.md
 # Convert README.ipynb to README.md via nbconvert on push.
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
 
 jobs:
   build:
