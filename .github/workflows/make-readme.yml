@@ -1,4 +1,4 @@
-name: Make README.md
+name: Make index
 
 # Convert README.ipynb to README.md via nbconvert on push.
 on:
@@ -37,10 +37,23 @@ jobs:
           git add docs/index.html
           git commit -m "Convert README.ipynb to markdown" -a
 
-      # Push.
-      - name: Push changes
+      # Push to master
+      - name: Push changes to master
         if: success()
         uses: ad-m/github-push-action@master
         with:
           branch: master
           github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update gh-pages
+        run: |
+          git checkout gh-pages
+          git rebase master
+
+      # Push to gh-pages
+      - name: Push changes to gh-pages
+        uses: ad-m/github-push-action@gh-pages
+        with:
+          branch: gh-pages
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
