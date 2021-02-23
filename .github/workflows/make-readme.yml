@@ -1,0 +1,45 @@
+name: Make README.md
+
+# Convert README.ipynb to README.md via nbconvert on push.
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+    
+      - uses: actions/checkout@v2
+      - name: Install Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+
+      # Install nbconvert
+      - name: Install dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install -r requirements.txt
+        
+        # Convert
+      - name: Convert notebook
+        run: jupyter nbconvert --template "pythoncodeblocks.tpl" --ClearMetadataPreprocessor.enabled=True --ClearOutput.enabled=True  --to markdown README.ipynb 
+
+      # Commit.
+      - name: Commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add README.md
+          git commit -m "Convert README.ipynb to markdown" -a
+          
+      # Push.
+      - name: Push changes
+        if: success()
+        uses: ad-m/github-push-action@master
+        with:
+          branch: main
+          github_token: ${{ secrets.ACCESS_TOKEN }}
