@@ -44,16 +44,3 @@ jobs:
         with:
           branch: master
           github_token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Update gh-pages
-        run: |
-          git checkout gh-pages
-          git rebase master
-
-      # Push to gh-pages
-      - name: Push changes to gh-pages
-        uses: ad-m/github-push-action@gh-pages
-        with:
-          branch: gh-pages
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-
