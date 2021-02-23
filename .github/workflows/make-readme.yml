@@ -26,14 +26,15 @@ jobs:
 
         # Convert
       - name: Convert notebook
-        run: jupyter nbconvert --ClearMetadataPreprocessor.enabled=True --ClearOutput.enabled=True  --to html README.ipynb
+        run: jupyter nbconvert --ClearMetadataPreprocessor.enabled=True --ClearOutput.enabled=True  --to html main.ipynb
 
       # Commit.
       - name: Commit files
         run: |
           git config --local user.email "action[bot]@github.com"
           git config --local user.name "github-actions[bot]"
-          git add README.md
+          mv index.html docs
+          git add docs/index.html
           git commit -m "Convert README.ipynb to markdown" -a
 
       # Push.
