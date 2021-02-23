@@ -1,2 +1,5 @@
 pennylane
 numpy
+jupyter-core
+nbconvert
+nbformat
