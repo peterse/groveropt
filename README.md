@@ -2,4 +2,4 @@
 
 By Prasanth Shyamsundar and Evan Peters
 
-For a presentation of this project please go to our (Presentation Page)[https://peterse.github.io/groveropt/]
+For a presentation of this project please go to our [Presentation Page](https://peterse.github.io/groveropt/)
