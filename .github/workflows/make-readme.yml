@@ -26,13 +26,13 @@ jobs:
 
         # Convert
       - name: Convert notebook
-        run: jupyter nbconvert --ClearMetadataPreprocessor.enabled=True --ClearOutput.enabled=True  --to markdown README.ipynb 
+        run: jupyter nbconvert --ClearMetadataPreprocessor.enabled=True --ClearOutput.enabled=True  --to markdown README.ipynb
 
       # Commit.
       - name: Commit files
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          git config --local user.email "action[bot]@github.com"
+          git config --local user.name "github-actions[bot]"
           git add README.md
           git commit -m "Convert README.ipynb to markdown" -a
 
@@ -42,4 +42,4 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           branch: main
-          github_token: ${{ secrets.ACCESS_TOKEN }}
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
