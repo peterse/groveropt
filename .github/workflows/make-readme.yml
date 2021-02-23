@@ -33,7 +33,7 @@ jobs:
         run: |
           git config --local user.email "action[bot]@github.com"
           git config --local user.name "github-actions[bot]"
-          mv index.html docs
+          mv main.html docs/index.html
           git add docs/index.html
           git commit -m "Convert README.ipynb to markdown" -a
 
