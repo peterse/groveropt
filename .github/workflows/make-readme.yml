@@ -26,7 +26,7 @@ jobs:
 
         # Convert
       - name: Convert notebook
-        run: jupyter nbconvert --template "mdtemplate.tpl" --ClearMetadataPreprocessor.enabled=True --ClearOutput.enabled=True  --to markdown README.ipynb 
+        run: jupyter nbconvert --template classic --ClearMetadataPreprocessor.enabled=True --ClearOutput.enabled=True  --to markdown README.ipynb 
 
       # Commit.
       - name: Commit files
