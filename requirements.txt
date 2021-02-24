@@ -2,4 +2,5 @@ pennylane
 numpy
 jupyter-core
 nbconvert
+jupyter_contrib_nbextensions
 nbformat
