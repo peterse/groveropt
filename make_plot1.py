@@ -2,6 +2,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib import ticker
 from matplotlib.ticker import MultipleLocator, AutoMinorLocator
 from matplotlib.colors import LogNorm
 from mpl_toolkits.axes_grid1 import make_axes_locatable
@@ -12,7 +13,7 @@ plt.style.use('phaselicious_style.mplstyle')
 
 NUM_QUBITS = 2
 PRECISION = 5
-SEED = 12
+SEED = 10
 
 rc = RandomCircuit(num_qubits=NUM_QUBITS, precision_qparams=PRECISION, seed=SEED)
 
@@ -60,9 +61,14 @@ ax0.set_title(r'Cost function $\langle H(\theta_0, \theta_1) \rangle$')
 im1 = ax1.pcolormesh(param_0_binedges, param_1_binedges, probabilities)
 divider = make_axes_locatable(ax1)
 cax1 = divider.append_axes("right", size="5%", pad=0.05)
-cbar1_ticks = np.linspace(roundoff, 1e-1, 6, endpoint=True)
-cbar1 = plt.colorbar(im1, cax=cax1)
-cbar1.ax.set_yticklabels([f"{x:.2e}" for x in cbar1_ticks])
+
+cbar1_ticks = np.linspace(0, probabilities.max(), 6, endpoint=True)
+fmt = ticker.ScalarFormatter(useMathText=True)
+fmt.set_powerlimits((0, 0))
+cbar1 = plt.colorbar(im1, cax=cax1, format=fmt)
+
+# cbar1.ax.set_yticklabels(["{:.1}".format(i) for i in cbar1.get_ticks()])
+# cbar1.ax.set_yticklabels([f"{x:.2e}" for x in cbar1_ticks])
 
 ax1.set_aspect('equal')
 ax1.set_title('Qarameterized Circuit: \n Probability of sampling ' + r'$(\theta_0, \theta_1)$')
@@ -70,7 +76,7 @@ ax1.set_title('Qarameterized Circuit: \n Probability of sampling ' + r'$(\theta_
 
 # Circle overlay
 center_idx = np.unravel_index(score_landscape.argmax(), score_landscape.shape)
-center = (param_0_vals_flat[center_idx[0]], param_1_vals_flat[center_idx[1]])
+center = (param_0_vals_flat[center_idx[1]], param_1_vals_flat[center_idx[0]])
 print(center)
 circ = plt.Circle(center, 0.5, fill=False, color='r', lw=3)
 ax1.add_artist(circ)
