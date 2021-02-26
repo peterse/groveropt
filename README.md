@@ -19,4 +19,4 @@ Enter **Qarameterized Circuits** (Quantum-parameterized Circuits). In this proje
 2. Construct a quantum oracle to *coherently* evaluate the state of the control registers, based on a chosen cost function.
 3. Train the circuit using a modified version of Grover's algorithm, which preferentially amplifies the good states of the control registers.
 
-This project builds on the findings of "Non-Boolean Quantum Amplitude Amplification and Quantum Mean Estimation", [arXiv:2102.04975 [quant-ph]](https://arxiv.org/abs/2102.04975).
+This project builds on the findings of Prasanth Shaymsundar, _"Non-Boolean Quantum Amplitude Amplification and Quantum Mean Estimation"_ (2018), [arXiv:2102.04975 [quant-ph]](https://arxiv.org/abs/2102.04975).
