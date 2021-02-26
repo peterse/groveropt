@@ -161,11 +161,16 @@ class LayerwiseRandomCircuit:
                  max_qparams=2 * np.pi,
                  include_max=False,
                  random_gateidx_sequence=None,
-                 seed=None):
+                 seed=None,
+                 devices=None,
+                 floq=False):
         self.num_qubits = num_qubits
         self.num_params = num_params
         self.precision_qparams = precision_qparams
         self.max_qparams = max_qparams
+
+        # Controls some gate decompositions
+        self.floq = floq
 
         self.num_bins = 2**precision_qparams
         if include_max:
@@ -183,12 +188,15 @@ class LayerwiseRandomCircuit:
         self.singleq_gate_sequence = np.random.choice(3,
                                                       size=10 * num_params *
                                                       num_qubits)
-
-        self.devices = [
-            qml.device('default.qubit',
-                       wires=num_qubits + i * precision_qparams)
-            for i in range(self.num_params + 1)
-        ]
+        if devices:
+            # initialize floq devices
+            self.devices = devices
+        else:
+            self.devices = [
+                qml.device('default.qubit',
+                           wires=num_qubits + i * precision_qparams)
+                for i in range(self.num_params + 1)
+            ]
 
         self.__init_target_prob__()
 
@@ -255,6 +263,7 @@ class LayerwiseRandomCircuit:
             H = np.zeros((2**self.num_qubits, 2**self.num_qubits))
             H[0, 0] = 1
             return qml.expval(qml.Hermitian(H, wires=range(self.num_qubits)))
+            # return qml.expval(qml.PauliZ(0))
 
         self.target_prob = func
 
@@ -265,11 +274,16 @@ class LayerwiseRandomCircuit:
         diag[0] *= -1
 
         qml.inv(self.rand_circuit(cparams, num_qparams))
-        qml.DiagonalQubitUnitary(diag, wires=range(self.num_qubits))
+        if self.floq:
+            decomposed_oracle(self.num_qubits)
+        else:
+            qml.DiagonalQubitUnitary(diag, wires=range(self.num_qubits))
 
         self.rand_circuit(cparams, num_qparams)
-        qml.DiagonalQubitUnitary(diag, wires=range(self.num_qubits))
-
+        if self.floq:
+            decomposed_oracle(self.num_qubits)
+        else:
+            qml.DiagonalQubitUnitary(diag, wires=range(self.num_qubits))
     # Non-Boolean Amplitude Amplification circuit
     def make_amplitude_amplification_circuit(self, num_qparams, K):
         assert num_qparams <= self.num_params
@@ -304,6 +318,9 @@ class LayerwiseRandomCircuit:
 
                 # Diffusion operator
                 qml.inv(init_circuit(cparams))
+                # Evan: This is incredibly painful to implement with a standard
+                # gate decomposition, so we can't actually use Floq beyond this
+                # point...
                 qml.DiagonalQubitUnitary(diag, wires=range(num_wires))
                 init_circuit(cparams)
 
@@ -347,3 +364,46 @@ def compute_K(generator):
 
     K = int(np.pi / (2 * (np.pi - Phi)))
     return K
+
+@qml.template
+def decomposed_oracle(num_qubits):
+    """Decompose an oracle into floq-friendly gates.
+
+    Algorithm credit: Norbert Schuch
+    https://quantumcomputing.stackexchange.com/questions/4078/
+        how-to-construct-a-multi-qubit-controlled-z-from-elementary-gates
+    """
+    if num_qubits == 2:
+        return qml.CZ(wires=[0,1])
+    elif num_qubits == 4:
+        qml.RZ(np.pi/8, wires=0)
+        qml.CNOT(wires=[0,1])
+        qml.RZ(-np.pi/8, wires=1)
+        qml.CNOT(wires=[0,1])
+        qml.RZ(np.pi/8, wires=1)
+        qml.CNOT(wires=[1, 2])
+        qml.RZ(-np.pi/8, wires=2)
+        qml.CNOT(wires=[0, 2])
+        qml.RZ(np.pi/8, wires=2)
+        qml.CNOT(wires=[1, 2])
+        qml.RZ(-np.pi/8, wires=2)
+        qml.CNOT(wires=[0, 2])
+        qml.RZ(np.pi/8, wires=2)
+        qml.CNOT(wires=[2, 3])
+        qml.RZ(-np.pi/8, wires=3)
+        qml.CNOT(wires=[0, 3])
+        qml.RZ(np.pi/8, wires=3)
+        qml.CNOT(wires=[1, 3])
+        qml.RZ(-np.pi/8, wires=3)
+        qml.CNOT(wires=[0, 3])
+        qml.RZ(np.pi/8, wires=3)
+        qml.CNOT(wires=[2, 3])
+        qml.RZ(-np.pi/8, wires=3)
+        qml.CNOT(wires=[0, 3])
+        qml.RZ(np.pi/8, wires=3)
+        qml.CNOT(wires=[1, 3])
+        qml.RZ(-np.pi/8, wires=3)
+        qml.CNOT(wires=[0, 3])
+        qml.RZ(np.pi/8, wires=3)
+    else:
+        raise NotImplementedError
