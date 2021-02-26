@@ -6,12 +6,12 @@ import remote_cirq
 from src import qoptimize, qarameterize, io
 
 NUM_QUBITS = 4
-NUM_PARAMS = 4 # Assume either all classical or all quantum
+NUM_PARAMS = 2 # Assume either all classical or all quantum
 
 PRECISION = 5
 SEED = 11
 
-USE_FLOQ = True
+USE_FLOQ = False
 if USE_FLOQ:
     floq_sim = remote_cirq.RemoteSimulator(io.get_api_key())
     dev = qml.device("cirq.simulator", wires=range(NUM_QUBITS), simulator=floq_sim)
