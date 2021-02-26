@@ -14259,11 +14259,11 @@ a.anchor-link {
 
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h1 id="Qarameterized-circuits:-Quantum-parameters-for-QML">Qarameterized circuits: Quantum parameters for QML<a class="anchor-link" href="#Qarameterized-circuits:-Quantum-parameters-for-QML">¶</a></h1><p><strong>Evan Peters</strong>, University of Waterloo, Institute for Quantum Computing, Fermilab Quantum Institute</p>
-<p><strong>Prasanth Shyamsundar</strong>, Fermi National Accelerator Laboratory, Fermilab Quantum Institute</p>
+<h1 id="Qarameterized-circuits:-Quantum-parameters-for-QML">Qarameterized circuits: Quantum parameters for QML<a class="anchor-link" href="#Qarameterized-circuits:-Quantum-parameters-for-QML">¶</a></h1><p><strong>Evan Peters</strong>, University of Waterloo, Institute for Quantum Computing, Fermilab Quantum Institute<br>
+<strong>Prasanth Shyamsundar</strong>, Fermi National Accelerator Laboratory, Fermilab Quantum Institute</p>
 <p>GitHub repository: <a href="https://github.com/peterse/groveropt">https://github.com/peterse/groveropt</a></p>
 <hr>
-<p><span style="color:gray"> *So you want to train your quantum circuit but you're tired of optimizing everything **classically**...?*</span>.</p>
+<p><span style="color:gray"> <i>So you want to train your quantum circuit but you're tired of optimizing everything <b>classically</b>...?</i></span></p>
 <p>Variational quantum circuits are the foundation of many near term quantum algorithms, from quantum chemistry to quantum machine learning. The applications span from drug discovery 💊 to particle physics ☢ to quantitative finance 🤑 and beyond!. In most of these applications, parameters are optimized by using the quantum quantum circuit to compute a cost function for some initial choice of parameters, and then updating these parameters using a <strong>classical</strong> optimizer running in lockstep with the quantum circuits.</p>
 <p>In this project we introduce <strong>Quantum-parameterized (Qarameterized) circuits</strong> for the optimization of variational circuits, which turns the power of a quantum circuit back towards itself to boost optimization!</p>
 
@@ -14299,7 +14299,9 @@ $$<p>Our technique to achieving quantum parameterization is summarized in the fo
 <p>In order to apply this optimization technique we prepare the circuit by "lifting" each parameter into quantum state space:</p>
 <ul>
 <li>The originally classically-parameterized rotation gates are replaced by controlled rotation gates, with the quantum parameters serving as controls.</li>
-<li>The computational basis states of the control register correspond to discrete values of $\theta = \sum_k \theta_k 2^{-k}$ in the range $[0, 2\pi)$.</li>
+<li>The computational basis states of the control register correspond to discrete values of $\theta$ in the range $[0, 2\pi)$.<br>
+The state $|\theta^{(1)}\theta^{(2)}\dots\rangle$ corresponds to the rotation angle
+$$\theta = \sum_k \theta^{(k)} \frac{2\pi}{2^{k}}$$</li>
 <li>Setting the state of the quantum parameters to one of the computational basis states recovers the behavior of the corresponding classically-parameterized circuit.</li>
 </ul>
 
@@ -14362,7 +14364,7 @@ $$\mathrm{score} = \Big|\big\langle\psi(\theta_\mathrm{quant})\big|0\big\rangle\
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<p>We then used qarameterization to search the parameter space for the optimal choices of $(\theta_1, \theta_2)$. Since this circuit has only two trainable parameters we can easilyvisualize the score landscape for different values of the parameters, compared to the probability that qarameterization samples a given choice of $(\theta_1, \theta_2)$</p>
+<p>We then used qarameterization to search the parameter space for the optimal choices of $(\theta_1, \theta_2)$. Since this circuit has only two trainable parameters we can easily visualize the score landscape for different values of the parameters, compared to the probability that qarameterization samples a given choice of $(\theta_1, \theta_2)$</p>
 
 </div>
 </div>
@@ -14401,9 +14403,25 @@ $$\mathrm{score} = \Big|\big\langle\psi(\theta_\mathrm{quant})\big|0\big\rangle\
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
 <hr>
-<h2 id="Discussion">Discussion<a class="anchor-link" href="#Discussion">¶</a></h2><ul>
-<li>We can see from the plots above that the amplification process has increased the probabilities of the good values of $(\theta_0, \theta_1)$, i.e., parameter-values with higher scores.</li>
-<li>
+<h2 id="Outlook-and-Discussion">Outlook and Discussion<a class="anchor-link" href="#Outlook-and-Discussion">¶</a></h2><p>In this project we</p>
+<ul>
+<li>Constructed variational quantum circuits that are parameterized by quantum registers/parameters.</li>
+<li>Constructed an oracle to <em>coherently</em> evaluate the quantum curcuits (and hence the states of the quantum parameters) using a score/cost function.</li>
+<li>Trained the quantum parameters in a manifestly quantum, using the non-boolean amplitude amplification algorithm.</li>
+</ul>
+<p>Our project offers several exciting possibilities for quantum machine learning, quantum statistical inference, etc.</p>
+<h4 id="Alternative-Qarameterized-circuit-architectures">Alternative Qarameterized circuit architectures<a class="anchor-link" href="#Alternative-Qarameterized-circuit-architectures">¶</a></h4><ul>
+<li>In this project we started with a classically parameterized variational circuit and elevated the classical rotation angles to be quantum parameters.</li>
+<li>However, several other circuit architectures are possible for qarameterized circuits.</li>
+<li>Since the circuit training doen't rely on computing gradients, the parameters need not correspond to rotation angles; they can simply be control registers for the various controlled operations in the circuits. </li>
+</ul>
+<h4 id="Quantum-oracles-for-other-score/cost-functions">Quantum oracles for other score/cost functions<a class="anchor-link" href="#Quantum-oracles-for-other-score/cost-functions">¶</a></h4><ul>
+<li>In this project we constructed an oracle for a simple score function, based on the inner-product of the circuit's output to a known target state. This is inline with the objective function used here: <a href="https://pennylane.ai/qml/demos/tutorial_barren_plateaus.html">https://pennylane.ai/qml/demos/tutorial_barren_plateaus.html</a></li>
+<li>However, using the presciption in Appendix E of <a href="https://arxiv.org/abs/2102.04975">(Shyamsundar, 2021)</a>, one can create oracles for a number of tasks, including for training classifiers and minimizing energies.</li>
+</ul>
+<h4 id="Gradient-free-training">Gradient-free training<a class="anchor-link" href="#Gradient-free-training">¶</a></h4><ul>
+<li>Since our circuit training paradigm doesn't rely on gradients, it can potentially be used to alleviate the <strong>barren plateaus problem</strong> discussed in <a href="https://doi.org/10.1038/s41467-018-07090-4">(McClean, 2018)</a>.</li>
+<li>One approach would be to use the amplification-based training to find good initial paramater values for the classical gradient-based training algorithms.</li>
 </ul>
 
 </div>
