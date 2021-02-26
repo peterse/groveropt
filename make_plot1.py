@@ -43,7 +43,7 @@ for idx in np.ndindex(param_0_vals.shape):
     probabilities[idx] = amplified_probs[idx]
 
 
-roundoff = 1e-6
+roundoff = 1e-5
 score_landscape[score_landscape == 0] = roundoff
 probabilities[probabilities == 0] = roundoff
 

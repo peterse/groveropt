@@ -1,7 +1,7 @@
 font.family: sans-serif
 font.sans-serif: Arial
-legend.fontsize: xx-large
-axes.labelsize: 19
+legend.fontsize: x-large
+axes.labelsize: 20
 axes.titlesize: 22
 xtick.labelsize: 16
 ytick.labelsize: 16
