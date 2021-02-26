@@ -8,8 +8,7 @@ NUM_QUBITS = 4
 NUM_PARAMS = 4 # Assume either all classical or all quantum
 
 PRECISION = 4
-# SEED = 34
-SEED = 34
+SEED = 3717
 
 local_dev = qml.device('default.qubit', wires=range(NUM_QUBITS), analytic=True)
 
@@ -36,7 +35,7 @@ def main():
     print("Performing {} iterations".format(K_opt))
     ampl_circuit, ampl_prob_func = generator_q.make_amplitude_amplification_circuit(num_qparams=NUM_PARAMS, K=K_opt)
     amplified_probs = ampl_prob_func(cparams=[])
-
+    print("...Finished grover iterations")
     # Sample from the grover-assisted distribution of thetas
     param_vals = np.linspace(0, 2*np.pi, num=2**PRECISION, endpoint=False)
     shape = (2 ** PRECISION, ) * NUM_PARAMS
@@ -48,14 +47,14 @@ def main():
     p_flat = probabilities.flatten()
 
     # Sample from the grid
-    nsamples = int(1e8)
+    nsamples = int(5e6)
     idx_samples = np.random.choice(np.arange(len(p_flat)), p=p_flat, size=nsamples)
     idx_samples = [np.unravel_index(x, shape) for x in idx_samples]
     theta_samples = []
     # Generate the lists of parameters associated with every sample
     for idx in idx_samples:
         theta_samples.append([param_vals[i] for i in idx])
-
+    print("...Finished sampling outcome")
     # Compare optimization with and without grover iterations
     rc = qarameterize.LayerwiseRandomCircuit(num_qubits=NUM_QUBITS,
                                              num_params=NUM_PARAMS,
@@ -69,17 +68,16 @@ def main():
         wirelist = [i for i in range(NUM_QUBITS)]
         return qml.expval(qml.Hermitian(H, wirelist))
 
-    # No need to run these circuits on floq; they're much smaller
     classical_circuit = qml.QNode(get_classical_circuit, local_dev)
 
 
     # qml.AdamOptimizer(stepsize=0.003)
     def make_optimizer():
-        return qml.AdamOptimizer(stepsize=0.00003)
+        return qml.AdamOptimizer(stepsize=0.003)
         # return qml.RMSPropOptimizer(stepsize=0.001, decay=0.9, eps=1e-08)
     # Optimization
-    n_trials = 10
-    n_iter = 30
+    n_trials = 5
+    n_iter = 500
 
     print("Quantum training:")
     assisted_start = np.asarray(theta_samples).mean(axis=0)
