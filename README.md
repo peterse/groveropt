@@ -4,7 +4,7 @@
 **Prasanth Shyamsundar**, Fermi National Accelerator Laboratory, Fermilab Quantum Institute
 
 This project is a submission to the QHack Open Hackathon 2021.  
-For a presentation of this project please go to our [Presentation Page](https://peterse.github.io/groveropt/).
+For a presentation of this project please go to our [Presentation Page](https://peterse.github.io/groveropt).
 
 ### Project Description: 
 

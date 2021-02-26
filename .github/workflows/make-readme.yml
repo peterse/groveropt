@@ -26,7 +26,7 @@ jobs:
 
         # Convert
       - name: Convert notebook
-        run: jupyter nbconvert --ClearMetadataPreprocessor.enabled=True --ClearOutput.enabled=True  --to html_embed main.ipynb
+        run: jupyter nbconvert --ClearMetadataPreprocessor.enabled=True --ClearOutput.enabled=True  --to html_embed presentation.ipynb
 
       # Commit.
       - name: Commit files
@@ -34,9 +34,9 @@ jobs:
           git config --local user.email "action[bot]@github.com"
           git config --local user.name "github-actions[bot]"
           rm docs/index.html
-          mv main.html docs/index.html
+          mv presentation.html docs/index.html
           git add docs/index.html
-          git commit -m "Convert main.ipynb to index.html" -a
+          git commit -m "Convert presentation.ipynb to index.html" -a
 
       # Push to master
       - name: Push changes to master
